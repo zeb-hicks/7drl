@@ -1,14 +1,11 @@
 ﻿using System;
 
-namespace _7drl
-{
-    public static class Program
-    {
-        [STAThread]
-        static void Main()
-        {
-            using (var game = new Game1())
-                game.Run();
-        }
+namespace Hiveware {
+  public static class Program {
+    [STAThread]
+    static void Main() {
+      Game.globalInstance = new Game();
+      Game.globalInstance.Run();
     }
+  }
 }
