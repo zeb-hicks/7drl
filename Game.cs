@@ -1,18 +1,21 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Content;
 
 namespace Hiveware {
   public class Game : Microsoft.Xna.Framework.Game {
-    private GraphicsDeviceManager _graphics;
-    private SpriteBatch _spriteBatch;
+    public GraphicsDeviceManager graphics;
+    public SpriteBatch SB;
 
     public static Game globalInstance;
 
-    public SceneNode Scene;
+    public SceneNode SceneRoot;
+
+    public ContentManager CM;
 
     public Game() {
-      _graphics = new GraphicsDeviceManager(this);
+      graphics = new GraphicsDeviceManager(this);
       Content.RootDirectory = "Content";
       IsMouseVisible = true;
     }
@@ -24,7 +27,7 @@ namespace Hiveware {
     }
 
     protected override void LoadContent() {
-      _spriteBatch = new SpriteBatch(GraphicsDevice);
+      SB = new SpriteBatch(GraphicsDevice);
 
       // TODO: use this.Content to load your game content here
     }
