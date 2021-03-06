@@ -4,8 +4,8 @@ namespace Hiveware {
   public static class Program {
     [STAThread]
     static void Main() {
-      Game.globalInstance = new Game();
-      Game.globalInstance.Run();
+      HWGame.globalInstance = new HWGame();
+      HWGame.globalInstance.Run();
     }
   }
 }

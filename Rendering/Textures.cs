@@ -18,7 +18,7 @@ namespace Hiveware {
       return cache[id];
     }
     public static (int, CachedTexture) Load(string path) {
-      Texture2D tex = Game.globalInstance.CM.Load<Texture2D>(path);
+      Texture2D tex = HWGame.globalInstance.CM.Load<Texture2D>(path);
 
       int i = nextID++;
       var ct = new CachedTexture(tex);

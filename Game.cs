@@ -4,17 +4,17 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Content;
 
 namespace Hiveware {
-  public class Game : Microsoft.Xna.Framework.Game {
+  public class HWGame : Microsoft.Xna.Framework.Game {
     public GraphicsDeviceManager graphics;
     public SpriteBatch SB;
 
-    public static Game globalInstance;
+    public static HWGame globalInstance;
 
     public SceneNode SceneRoot;
 
     public ContentManager CM;
 
-    public Game() {
+    public HWGame() {
       graphics = new GraphicsDeviceManager(this);
       Content.RootDirectory = "Content";
       IsMouseVisible = true;

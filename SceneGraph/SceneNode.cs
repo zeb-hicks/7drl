@@ -34,12 +34,12 @@ namespace Hiveware {
       }
     }
 
-    public SceneNode(): base(Hiveware.Game.globalInstance) {
+    public SceneNode(): base(HWGame.globalInstance) {
       this.Parent = null;
       this.Position = new Vector3();
     }
 
-    public SceneNode(SceneNode parent, Vector3 position = new Vector3()): base(Hiveware.Game.globalInstance) {
+    public SceneNode(SceneNode parent, Vector3 position = new Vector3()): base(HWGame.globalInstance) {
       this.Parent = parent;
       this.Position = position;
     }
