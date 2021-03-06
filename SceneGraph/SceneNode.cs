@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System;
 
 namespace Hiveware {
-  public class SceneNode: GameComponent, IDrawable {
+  public class SceneNode: DrawableGameComponent {
 
     /// <summary>
     /// Set of child nodes for this SceneNode.
@@ -65,31 +65,11 @@ namespace Hiveware {
       }
     }
 
-    private int drawOrder;
-    public int DrawOrder {
-      get {
-        return drawOrder;
+    public override void Draw(GameTime time) {
+      base.Draw(time);
+      foreach (DrawableGameComponent child in Children) {
+        child.Draw(time);
       }
-      set {
-        drawOrder = value;
-        DrawOrderChanged?.Invoke(this, null);
-      }
-    }
-    private bool visible;
-    public bool Visible {
-      get {
-        return visible;
-      }
-      set {
-        visible = value;
-        VisibleChanged?.Invoke(this, null);
-      }
-    }
-    public event EventHandler<EventArgs> DrawOrderChanged;
-    public event EventHandler<EventArgs> VisibleChanged;
-
-    public virtual void Draw(GameTime time) {
-
     }
 
   }
