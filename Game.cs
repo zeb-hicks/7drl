@@ -10,7 +10,7 @@ namespace Hiveware {
 
     public static HWGame globalInstance;
 
-    public SceneNode SceneRoot;
+    public Scene CurrentScene;
 
     public ContentManager CM;
 
@@ -36,7 +36,7 @@ namespace Hiveware {
       if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
         Exit();
 
-      // TODO: Add your update logic here
+      CurrentScene?.Update(gameTime);
 
       base.Update(gameTime);
     }
