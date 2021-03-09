@@ -27,6 +27,16 @@ namespace Hiveware {
       }
     }
 
+    public new bool TryAdd(TKey key, TValue value) {
+      lock(syn) {
+        if (ContainsKey(key)) return false;
+        if (inverse.ContainsKey(value)) return false;
+        base.Add(key, value);
+        inverse.Add(value, key);
+        return true;
+      }
+    }
+
     public TValue GetFromKey(TKey key) {
       if (!base.ContainsKey(key)) throw new Exception("Key does not exist.");
       return base[key];
