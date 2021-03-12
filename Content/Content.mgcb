@@ -85,6 +85,9 @@
 /processorParam:TextureFormat=Color
 /build:Art/tiles_specular.png
 
+#begin Art/tiles.json
+/copy:Art/tiles.json
+
 #begin Data/lut_big.png
 /importer:TextureImporter
 /processor:TextureProcessor
