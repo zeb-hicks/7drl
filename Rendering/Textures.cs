@@ -5,8 +5,8 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Hiveware {
   public class CachedTexture {
-    public Texture2D Texture;
-    public CachedTexture(Texture2D texture) {
+    public TextureSet Texture;
+    public CachedTexture(TextureSet texture) {
       Texture = texture;
     }
   }
@@ -18,7 +18,7 @@ namespace Hiveware {
       return cache[id];
     }
     public static (int, CachedTexture) Load(string path) {
-      Texture2D tex = HWGame.globalInstance.CM.Load<Texture2D>(path);
+      TextureSet tex = AssetLoader.GetTexture(path);
 
       int i = nextID++;
       var ct = new CachedTexture(tex);
@@ -39,5 +39,13 @@ namespace Hiveware {
       }
       return (i, t);
     }
+  }
+
+  public struct TextureSet {
+    public Texture2D Diffuse;
+    public Texture2D Normal;
+    public Texture2D Specular;
+    public Texture2D Emissive;
+    public Texture2D Depth;
   }
 }
