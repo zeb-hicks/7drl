@@ -22,16 +22,30 @@ namespace Hiveware {
     }
 
     protected override void Initialize() {
-      // TODO: Add your initialization logic here
+      DeferredRenderer.Setup(GraphicsDevice);
 
       base.Initialize();
     }
+
+    Effect fx, lfx;
+    CachedTexture ct;
+    int[] tiles;
 
     protected override void LoadContent() {
       SB = new SpriteBatch(GraphicsDevice);
       CM = Content;
 
-      // TODO: use this.Content to load your game content here
+      fx = Content.Load<Effect>("Shaders/TilemapEffect");
+      lfx = Content.Load<Effect>("Shaders/Lighting");
+
+      int i;
+      (i, ct) = TextureCache.Get("Art/tiles");
+
+      tiles = new int[256];
+
+      for (i = 0; i < 256; i++) {
+        tiles[i] = i;
+      }
     }
 
     protected override void Update(GameTime gameTime) {
@@ -46,9 +60,51 @@ namespace Hiveware {
     protected override void Draw(GameTime gameTime) {
       GraphicsDevice.Clear(Color.Transparent);
 
-      // TODO: Add your drawing code here
+      fx.Parameters["Tiles"]?.SetValue(tiles);
+      fx.Parameters["TileSize"]?.SetValue(16);
+      fx.Parameters["MapSize"]?.SetValue(new Vector2(16f, 16f));
 
-      base.Draw(gameTime);
+      fx.Parameters["diffuse"]?.SetValue(ct.Texture.Diffuse);
+      fx.Parameters["normal"]?.SetValue(ct.Texture.Normal);
+      fx.Parameters["specular"]?.SetValue(ct.Texture.Specular);
+      fx.Parameters["emissive"]?.SetValue(ct.Texture.Emissive);
+      fx.Parameters["depth"]?.SetValue(ct.Texture.Depth);
+
+      fx.Parameters["gdiff"]?.SetValue(DeferredRenderer.rtDiffuse);
+      fx.Parameters["gnorm"]?.SetValue(DeferredRenderer.rtNormal);
+      fx.Parameters["gdse"]?.SetValue(DeferredRenderer.rtDSE);
+
+      GraphicsDevice.SetRenderTarget(DeferredRenderer.rtNormal);
+      GraphicsDevice.Clear(ClearOptions.Target, new Vector4(0.5f, 0.5f, 1f, 1f), 0f, 0);
+
+      GraphicsDevice.SetRenderTargets(
+        DeferredRenderer.rtDiffuse,
+        DeferredRenderer.rtNormal,
+        DeferredRenderer.rtDSE
+      );
+
+      SB.Begin(SpriteSortMode.Deferred, null, null, null, null, fx, null);
+      SB.Draw(ct.Texture.Diffuse, new Rectangle(0, 0, 1024, 1024), Color.White);
+      SB.End();
+
+      int w = GraphicsDevice.Viewport.Width;
+      int h = GraphicsDevice.Viewport.Height;
+
+      GraphicsDevice.SetRenderTarget(DeferredRenderer.rtLighting);
+
+      SB.Begin(SpriteSortMode.Deferred, null, null, null, null, lfx, null);
+      SB.Draw(ct.Texture.Diffuse, new Rectangle(0, 0, w, h), Color.White);
+      SB.End();
+
+      GraphicsDevice.SetRenderTarget(null);
+
+      SB.Begin();
+      SB.Draw(DeferredRenderer.rtDiffuse, new Rectangle(0, 0, w / 2, h / 2), Color.White);
+      SB.Draw(DeferredRenderer.rtNormal, new Rectangle(w / 2, 0, w / 2, h / 2), Color.White);
+      SB.Draw(DeferredRenderer.rtDSE, new Rectangle(0, h / 2, w / 2, h / 2), Color.White);
+      SB.End();
+
+      // base.Draw(gameTime);
     }
   }
 }

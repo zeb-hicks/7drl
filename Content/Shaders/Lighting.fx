@@ -1,4 +1,4 @@
-﻿#if OPENGL
+#if OPENGL
 	#define SV_POSITION POSITION
 	#define VS_SHADERMODEL vs_3_0
 	#define PS_SHADERMODEL ps_3_0
@@ -11,8 +11,9 @@ Texture2D SpriteTexture;
 sampler2D SpriteTextureSampler = sampler_state { Texture = <SpriteTexture>; MinFilter = Point; MagFilter = Point; AddressU = Wrap; AddressV = Wrap; };
 
 Texture2D gdiff;
-Texture2D gdse;
 Texture2D gnorm;
+Texture2D gdse;
+Texture2D glight;
 
 Texture2D diffuse;
 Texture2D normal;
@@ -26,9 +27,9 @@ sampler2D specularSampler = sampler_state { Texture = <specular>; MinFilter = Po
 sampler2D emissiveSampler = sampler_state { Texture = <emissive>; MinFilter = Point; MagFilter = Point; AddressU = Wrap; AddressV = Wrap; };
 sampler2D depthSampler    = sampler_state { Texture = <depth>;    MinFilter = Point; MagFilter = Point; AddressU = Wrap; AddressV = Wrap; };
 
-int Tiles[256];
-int TileSize;
-float2 MapSize;
+sampler2D gdiffs = sampler_state { Texture = <gdiff>; MinFilter = Point; MagFilter = Point; AddressU = Clamp; AddressV = Clamp; };
+sampler2D gnorms = sampler_state { Texture = <gnorm>; MinFilter = Point; MagFilter = Point; AddressU = Clamp; AddressV = Clamp; };
+sampler2D gdses  = sampler_state { Texture = <gdse>;  MinFilter = Point; MagFilter = Point; AddressU = Clamp; AddressV = Clamp; };
 
 struct VertexShaderOutput {
 	float4 Position : SV_POSITION;
@@ -43,9 +44,18 @@ struct PixelShaderOutput {
 	float4 DSE: COLOR2;
 };
 
-int TileIDFromUV(float2 uv) {
-	float2 tuv = uv * MapSize;
-	return (int)(tuv.x + tuv.y * MapSize.x);
+const float PI = 3.141592653589793;
+const float GR = 1.618033988749894;
+
+float2 grsample(int i, int n, float radius, float offset) {
+  float r = (float)i / (float)n * radius;
+  float d = 1.0;
+  // i += i;
+  i += offset;
+  float a = PI * GR * i;
+  float x = cos(a);
+  float y = sin(a);
+  return float2(x, y) * r;
 }
 
 PixelShaderOutput MainPS(VertexShaderOutput input, float2 vPos : VPOS) {
