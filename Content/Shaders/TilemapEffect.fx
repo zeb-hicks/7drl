@@ -50,15 +50,18 @@ int TileIDFromUV(float2 uv) {
 
 PixelShaderOutput MainPS(VertexShaderOutput input, float2 vPos : VPOS) {
 	PixelShaderOutput output;
-	float4 diffuse = tex2D(diffuseSampler, input.TextureCoordinates);
+
+	float2 uv = input.TextureCoordinates;
+
+	float4 diffuse = tex2D(diffuseSampler, uv);
 
 	if (diffuse.a <= 0.05f) discard;
 
-	float4 normal = tex2D(normalSampler, input.TextureCoordinates);
+	float4 normal = tex2D(normalSampler, uv);
 	normal.rgb = normalize(normal.rgb - float3(0.5, 0.5, 0.5)) + float3(0.5, 0.5, 0.5);
-	float specular = tex2D(specularSampler, input.TextureCoordinates).r;
-	float depth = tex2D(depthSampler, input.TextureCoordinates).r;
-	float emissive = tex2D(emissiveSampler, input.TextureCoordinates).r;
+	float specular = tex2D(specularSampler, uv).r;
+	float depth = tex2D(depthSampler, uv).r;
+	float emissive = tex2D(emissiveSampler, uv).r;
 
 	output.Diffuse = diffuse;
 	output.Normal = normal;

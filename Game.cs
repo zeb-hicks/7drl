@@ -27,7 +27,7 @@ namespace Hiveware {
       base.Initialize();
     }
 
-    Effect fx, lfx;
+    Effect fx, lfx, cfx;
     CachedTexture ct;
     int[] tiles;
 
@@ -37,6 +37,7 @@ namespace Hiveware {
 
       fx = Content.Load<Effect>("Shaders/TilemapEffect");
       lfx = Content.Load<Effect>("Shaders/Lighting");
+      cfx = Content.Load<Effect>("Shaders/Composite");
 
       int i;
       (i, ct) = TextureCache.Get("Art/tiles");
@@ -74,6 +75,11 @@ namespace Hiveware {
       fx.Parameters["gnorm"]?.SetValue(DeferredRenderer.rtNormal);
       fx.Parameters["gdse"]?.SetValue(DeferredRenderer.rtDSE);
 
+      cfx.Parameters["gdiff"]?.SetValue(DeferredRenderer.rtDiffuse);
+      cfx.Parameters["gnorm"]?.SetValue(DeferredRenderer.rtNormal);
+      cfx.Parameters["gdse"]?.SetValue(DeferredRenderer.rtDSE);
+      cfx.Parameters["glight"]?.SetValue(DeferredRenderer.rtLighting);
+
       GraphicsDevice.SetRenderTarget(DeferredRenderer.rtNormal);
       GraphicsDevice.Clear(ClearOptions.Target, new Vector4(0.5f, 0.5f, 1f, 1f), 0f, 0);
 
@@ -83,18 +89,13 @@ namespace Hiveware {
         DeferredRenderer.rtDSE
       );
 
-      SB.Begin(SpriteSortMode.Deferred, null, null, null, null, fx, null);
+      SB.Begin(effect: fx);
       SB.Draw(ct.Texture.Diffuse, new Rectangle(0, 0, 1024, 1024), Color.White);
       SB.End();
+      // DeferredRenderer.DrawEffect(fx, new Rectangle(0, 0, 1024, 1024));
 
       int w = GraphicsDevice.Viewport.Width;
       int h = GraphicsDevice.Viewport.Height;
-
-      GraphicsDevice.SetRenderTarget(DeferredRenderer.rtLighting);
-
-      SB.Begin(SpriteSortMode.Deferred, null, null, null, null, lfx, null);
-      SB.Draw(ct.Texture.Diffuse, new Rectangle(0, 0, w, h), Color.White);
-      SB.End();
 
       GraphicsDevice.SetRenderTarget(null);
 
@@ -104,7 +105,19 @@ namespace Hiveware {
       SB.Draw(DeferredRenderer.rtDSE, new Rectangle(0, h / 2, w / 2, h / 2), Color.White);
       SB.End();
 
-      // base.Draw(gameTime);
+      // GraphicsDevice.SetRenderTarget(DeferredRenderer.rtLighting);
+
+      // SB.Begin(effect: lfx);
+      // SB.Draw(ct.Texture.Diffuse, new Rectangle(0, 0, w, h), Color.White);
+      // SB.End();
+
+      SB.Begin(effect: cfx);
+
+      SB.Draw(DeferredRenderer.rtDiffuse, new Rectangle(w / 2, h / 2, w / 2, h / 2), Color.White);
+
+      SB.End();
+
+      base.Draw(gameTime);
     }
   }
 }

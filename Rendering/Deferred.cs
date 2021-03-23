@@ -71,5 +71,23 @@ namespace Hiveware {
 
       spriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, fxComposite, null);
     }
+
+    private static VertexPositionColorTexture[] varr = new VertexPositionColorTexture[4];
+    public static void DrawEffect(Effect fx, Rectangle rect) {
+      float x = rect.X / graphics.Viewport.Width;
+      float y = rect.Y / graphics.Viewport.Height;
+      float w = rect.Width / graphics.Viewport.Width;
+      float h = rect.Height / graphics.Viewport.Height;
+      varr[0] = new VertexPositionColorTexture(new Vector3(x, y, 0.0f), Color.White, new Vector2(0.0f, 0.0f));
+      varr[1] = new VertexPositionColorTexture(new Vector3(x + w, y, 0.0f), Color.White, new Vector2(1.0f, 0.0f));
+      varr[2] = new VertexPositionColorTexture(new Vector3(x, y + h, 0.0f), Color.White, new Vector2(0.0f, 1.0f));
+      varr[3] = new VertexPositionColorTexture(new Vector3(x + w, y + h, 0.0f), Color.White, new Vector2(1.0f, 1.0f));
+
+      foreach (var pass in fx.CurrentTechnique.Passes) {
+        pass.Apply();
+
+        graphics.DrawUserPrimitives<VertexPositionColorTexture>(PrimitiveType.TriangleStrip, varr, 0, 4);
+      }
+    }
   }
 }
